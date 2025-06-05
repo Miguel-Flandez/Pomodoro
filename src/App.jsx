@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import {Pomodoro} from '@/components'
 
 import './App.css'
