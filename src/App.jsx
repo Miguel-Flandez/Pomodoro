@@ -1,4 +1,4 @@
-import {Pomodoro} from '@/components'
+import {Pomodoro} from '@/pages'
 
 import './App.css'
 

@@ -44,7 +44,7 @@ export default function Pomodoro(){
 
 
   useEffect(() => {
-
+    
     if (start) {
       timerRef.current = setInterval(() => {
         if(secondsLeft.current){
@@ -76,7 +76,6 @@ export default function Pomodoro(){
   }, [start]);
 
   useEffect(()=>{
-    
     document.body.style.transition = 'background-color 1s ease-out'
   }),[]
 
