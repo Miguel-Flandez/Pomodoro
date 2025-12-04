@@ -3,5 +3,7 @@
 @layer base{
     body{
         background-color: #943030;
+        color: white;
+        width: 100%;
     }
 }
