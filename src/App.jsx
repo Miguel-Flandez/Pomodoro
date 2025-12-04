@@ -1,16 +1,15 @@
-import {Pomodoro} from '@/pages'
-
+import {Pomodoro, Habits} from '@/pages'
 import './App.css'
+import { Routes, Route } from 'react-router-dom'
 
-function App() {
+export default function App() {
 
 
   return (
-    <div>
-      <Pomodoro/>
-    </div>
     
+    <Routes>
+      <Route path='/pomodoro' element={<Pomodoro/>} />
+      <Route path='/habits' element={<Habits/>} />
+    </Routes>
   )
 }
-
-export default App
