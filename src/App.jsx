@@ -9,7 +9,7 @@ export default function App() {
     
     <Routes>
       <Route path='/pomodoro' element={<Pomodoro/>} />
-      <Route path='/habits' element={<Habits/>} />
+      <Route path='/' element={<Habits/>} />
     </Routes>
   )
 }
