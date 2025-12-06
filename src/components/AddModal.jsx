@@ -1,8 +1,36 @@
+import { useRef, useState } from "react"
 
-export default function AddModal({modalState}){
+export default function AddModal({modalState, habitHandler}){
 
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    const inputRef = useRef(null)
+    const [selectedDay, setSelectedDay] = useState([])
+    const [habitName, setHabitName] = useState('')
+    
+    function toggleDay(day){
+        setSelectedDay(prev=>{
+            if(prev.includes(day)){
+                return prev.filter(e=>e!==day)
+            }
+            return [...prev, day]
+        })
+    }
+    function exit(){
+        modalState(false);
+        inputRef.current.value = ''
+        setSelectedDay([]);
+        setHabitName('')
+        console.log(inputRef.current.value)
+    }
 
+    function add(){
+        habitHandler(habitName, selectedDay);
+        modalState(false);
+        inputRef.current.value = ''
+        setSelectedDay([]);
+        setHabitName('')
+
+    }
 
 
     return(
@@ -10,7 +38,7 @@ export default function AddModal({modalState}){
 
             <div className="flex items-center gap-[2vw]">
                 <span className="text-[4rem] font-bold whitespace-nowrap">Add a Habit</span>
-                <button onClick={()=>modalState(false)}>
+                <button onClick={exit}>
                     <i class="fa-solid fa-xmark transition-transform hover:scale-120 text-[3rem]"></i>
                 </button>
             </div>
@@ -20,14 +48,19 @@ export default function AddModal({modalState}){
 
             <div id="add" className="flex flex-col w-[90%]">
                 <label htmlFor="habit" className="text-[2rem]">Name this Habit</label>
-                <input type="text" id="habit" className="border-2 text-[2rem] border-white rounded-sm h-[3rem]"/>
+                <input ref={inputRef} type="text" id="habit" className="border-2 text-[2rem] border-white rounded-sm h-[3rem]" onChange={(e)=>{setHabitName(e.target.value)}}/>
             </div>
 
             <div id="frequency" className="w-full flex justify-evenly">
                 {days.map(day=>(
-                    <button key={day} className="text-[1rem] border-1 border-white rounded-md px-[1rem] py-[0.25rem] hover:border-">{day}</button>
+                    <button key={day} className={`${selectedDay.find(e=>e===day)?'bg-red-800':''} text-[1rem] border-1 border-white rounded-md px-[1rem] py-[0.25rem] hover:border-blue-800`}
+                    onClick={()=>toggleDay(day)}>{day}</button>
                 ))}
             </div>
+
+            <button id="add" onClick={add} className="hover:bg-red-800">
+                Add
+            </button>
 
         </div>
     )
