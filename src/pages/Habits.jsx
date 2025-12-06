@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react'
-import {Header, AddModal} from '@/components'
+import {Header, AddModal, DeleteModal} from '@/components'
+import React from 'react'
 import '@/css/tables.css'
 
 export default function Habits(){
 
-    const [showAddModal, setShowAddModal] = useState(true)
+    const [showAddModal, setShowAddModal] = useState(false)
+    const [showDeleteModal, setShowDeleteModal] = useState(false)
+    const [habits, setHabits] = useState([])
+    
 
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
@@ -13,6 +17,17 @@ export default function Habits(){
         setShowAddModal(value)
     }
 
+    function handleHabitInput(value1, value2){
+        setHabits(prev=>[...prev,{
+            name: value1,
+            schedule: value2
+        }])
+        console.log(habits)
+    }
+
+    function handleDelete(bool){
+        setShowDeleteModal(false)
+    }
 
 
 
@@ -27,24 +42,41 @@ export default function Habits(){
         <>
         <Header/>
         <div className={`${showAddModal ? '' : '-translate-x-[100vw]'} fixed w-[30%] top-0 left-0 transition-all z-50`}>
-            <AddModal modalState={handleModal}/>    
+            <AddModal modalState={handleModal} habitHandler={handleHabitInput}/>    
         </div>
         
 
         
-        <div id='streak-container' className='w-[90vw] m-auto relative p-[2rem]'>
+        <div id='streak-container' className='w-[90vw] m-auto p-[2rem]'>
             
 
-            <div id="streaks" className='grid grid-cols-[2fr_repeat(7,1fr)] gap-[2vw]'>
+            <div id="streaks" className='grid grid-cols-[2fr_repeat(7,1fr)_0.25fr] gap-[2vw] items-center'>
                 <div></div>
                 {days.map(day=>(
                     <span key={day}>{day}</span>
                 ))}
+                <div></div>
 
-                <span className="habit">asdasd</span>
-                {days.map((_, id)=>(
-                    <div key={id}></div>
-                ))} 
+                {habits.map((habit, index)=>(
+                    <React.Fragment key={index}>
+                        <span className="habit">{habit.name}</span>
+                        {days.map((day, id)=>(
+                            <div key={id} className={`${habit.schedule?.find(n=>n===day)? '' : 'border-transparent! '} border-2 border-white rounded-md w-[2rem] h-[2rem]`}></div>
+                        ))} 
+                        
+                        <div className='flex'>
+                            <i class="fa-solid fa-pen-to-square"></i>
+                            <i class="fa-solid fa-trash" onClick={()=>setShowDeleteModal(true)}></i>
+                            
+                            {showDeleteModal && <DeleteModal deleteHandler={handleDelete}/>}
+                            
+                            
+                        </div>
+                        
+                        
+                    </React.Fragment>
+                ))}
+                
             </div>
             
         </div>
