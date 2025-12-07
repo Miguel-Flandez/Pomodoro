@@ -1,12 +1,16 @@
 import { useEffect, useState } from 'react'
 import {Header, AddModal, DeleteModal} from '@/components'
+import { MyContext } from '@/context'
 import React from 'react'
-import '@/css/tables.css'
+
 
 export default function Habits(){
 
+    
+
     const [showAddModal, setShowAddModal] = useState(false)
     const [showDeleteModal, setShowDeleteModal] = useState(false)
+    const [deleteChoice, setDeleteChoice] = useState(null)
     const [habits, setHabits] = useState([])
     
 
@@ -25,21 +29,23 @@ export default function Habits(){
         console.log(habits)
     }
 
-    function handleDelete(bool){
+    // function handleDelete(bool){
+    //     setShowDeleteModal(false)
+    // }
+
+    useEffect(()=>{
         setShowDeleteModal(false)
-    }
-
-
-
+    }, [deleteChoice])
+        
     useEffect(() => {
       document.body.style.backgroundColor = '#ff633e'
-    
+        
  
     }, [])
     
 
     return(
-        <>
+        <MyContext.Provider value={{deleteChoice, setDeleteChoice}}>
         <Header/>
         <div className={`${showAddModal ? '' : '-translate-x-[100vw]'} fixed w-[30%] top-0 left-0 transition-all z-50`}>
             <AddModal modalState={handleModal} habitHandler={handleHabitInput}/>    
@@ -68,7 +74,7 @@ export default function Habits(){
                             <i class="fa-solid fa-pen-to-square"></i>
                             <i class="fa-solid fa-trash" onClick={()=>setShowDeleteModal(true)}></i>
                             
-                            {showDeleteModal && <DeleteModal deleteHandler={handleDelete}/>}
+                            {showDeleteModal && <DeleteModal />}
                             
                             
                         </div>
@@ -90,7 +96,7 @@ export default function Habits(){
        
         
         
-        </>
+        </MyContext.Provider>
         
     )
 }
