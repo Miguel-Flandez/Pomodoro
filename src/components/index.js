@@ -1,5 +1,5 @@
 import Header from './Header.jsx'
-import AddModal from './AddModal.jsx'
+import AddHabitModal from './AddHabitModal.jsx'
 import DeleteModal from './DeleteModal.jsx'
 
-export {Header, AddModal, DeleteModal}
+export {Header, AddHabitModal, DeleteModal}
