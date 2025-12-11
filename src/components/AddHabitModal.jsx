@@ -1,6 +1,6 @@
 import { useRef, useState } from "react"
 
-export default function AddModal({modalState, habitHandler}){
+export default function AddHabitModal({addModalState, habitHandler}){
 
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
     const inputRef = useRef(null)
@@ -16,7 +16,7 @@ export default function AddModal({modalState, habitHandler}){
         })
     }
     function exit(){
-        modalState(false);
+        addModalState(false);
         inputRef.current.value = ''
         setSelectedDay([]);
         setHabitName('')
@@ -25,7 +25,7 @@ export default function AddModal({modalState, habitHandler}){
 
     function add(){
         habitHandler(habitName, selectedDay);
-        modalState(false);
+        addModalState(false);
         inputRef.current.value = ''
         setSelectedDay([]);
         setHabitName('')
@@ -34,10 +34,10 @@ export default function AddModal({modalState, habitHandler}){
 
 
     return(
-        <div id="modal-container" className="h-screen relative bg-blue-600 flex flex-col items-center py-[2rem] px-[1rem] gap-[10rem] rounded-r-4xl">
+        <div id="modal-container" className="h-screen relative bg-blue-600 flex flex-col items-center py-[2rem] px-[1rem] gap-[5vw] rounded-r-4xl">
 
             <div className="flex items-center gap-[2vw]">
-                <span className="text-[4rem] font-bold whitespace-nowrap">Add a Habit</span>
+                <span className="text-[2rem] font-bold whitespace-nowrap">Add a Habit</span>
                 <button onClick={exit}>
                     <i class="fa-solid fa-xmark transition-transform hover:scale-120 text-[3rem]"></i>
                 </button>
