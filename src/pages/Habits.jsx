@@ -6,24 +6,25 @@ import React from 'react'
 
 export default function Habits(){
 
+    // state for showing and hiding modals
     const [showAddModal, setShowAddModal] = useState(false)
     const [showDeleteModal, setShowDeleteModal] = useState(false)
 
+    // state for confirming delete and index of the item to be deleted
     const [deleteChoice, setDeleteChoice] = useState(null)
     const [deleteIndex, setDeleteIndex] = useState(null)
 
     const [habits, setHabits] = useState([])
 
+    // days sorted with current day at the rightmost
     const days = ['Sun','Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-
     const today = new Date().getDay()
-
     const sortedDays = useMemo(()=>{
         return [...days.slice(today+1), ...days.slice(0, today+1)]
-    })
+    },[])
     
+    // last seven days 
     const todate = new Date()
-
     const lastSevenDates = useMemo(()=>{
         let arr = []
 
@@ -35,7 +36,7 @@ export default function Habits(){
         console.log(arr)
         return arr
 
-    })
+    }, [])
     
 
 
@@ -50,8 +51,21 @@ export default function Habits(){
             name: value1,
             schedule: value2,
             streak: 0,
+            daysCompleted:[]
         }])
         console.log(habits)
+    }
+
+    // function for habit checkbox
+    function checkHabit(habitIndex, date){
+        setHabits(prev=>{
+            
+                return prev.map((habit, index)=>habitIndex===index ?{
+                ...habit, 
+                daysCompleted:[...habit.daysCompleted, date]
+                } : habit
+            )}
+        )
     }
 
     // deletes the selected habit
@@ -105,9 +119,14 @@ export default function Habits(){
                 {habits.map((habit, index)=>(
                     <React.Fragment key={index}>
                         <span className="habit">{habit.name}</span>
-                        {sortedDays.map((day, id)=>(
-                            <div key={id} className={`${habit.schedule?.find(n=>n===day)? '' : 'border-transparent! '} border-2 border-white rounded-md w-[2rem] h-[2rem]`}></div>
-                        ))} 
+                        {sortedDays.map((day, id)=>{
+                            const date = new Date()
+                            date.setDate(todate.getDate() - (6-id))    
+                        
+                        return(
+                            <div key={id} className={`${habit.daysCompleted.find(e=>e===date.getDate()) ? 'bg-white' : ''} ${habit.schedule?.find(n=>n===day)? '' : 'border-transparent! '} border-2 border-white rounded-md w-[2rem] h-[2rem]`}
+                             onClick={()=>checkHabit(index, date.getDate())}></div>
+                        )})} 
                         
                         <div className='flex'>
                             <i class="fa-solid fa-pen-to-square"></i>
