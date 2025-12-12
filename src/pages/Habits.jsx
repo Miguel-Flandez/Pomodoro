@@ -9,6 +9,7 @@ export default function Habits(){
     // state for showing and hiding modals
     const [showAddModal, setShowAddModal] = useState(false)
     const [showDeleteModal, setShowDeleteModal] = useState(false)
+    const [editIndex, setEditIndex] = useState(null)
 
     // state for confirming delete and index of the item to be deleted
     const [deleteChoice, setDeleteChoice] = useState(null)
@@ -47,23 +48,39 @@ export default function Habits(){
 
     // inputs the habit name and schedule
     function handleHabitInput(value1, value2){
-        setHabits(prev=>[...prev,{
-            name: value1,
-            schedule: value2,
-            streak: 0,
-            daysCompleted:[]
-        }])
+        setHabits(prev=>{
+            if(editIndex!==null){
+                return prev.map((obj, i)=>{
+                if(editIndex===i){
+                    return {...obj, name:value1, schedule:value2}
+                }else{
+                    return {...obj}
+                }
+                })
+            }else{
+                return [...prev,{
+                name: value1,
+                schedule: value2,
+                streak: 0,
+                daysCompleted:[]
+                }]
+            }
+            
+        }
+            
+    )
         console.log(habits)
     }
 
     // function for habit checkbox
     function checkHabit(habitIndex, date){
-        setHabits(prev=>{
-            
+        setHabits(prev=>{            
                 return prev.map((habit, index)=>habitIndex===index ?{
                 ...habit, 
-                daysCompleted:[...habit.daysCompleted, date]
+                daysCompleted: habit.daysCompleted.find(i=>i===date) ? habit.daysCompleted.filter(i=>i!==date) : [...habit.daysCompleted, date]
                 } : habit
+
+                
             )}
         )
     }
@@ -74,7 +91,6 @@ export default function Habits(){
             setHabits(prev=>prev.filter((_,i)=>i!==deleteIndex))
             setDeleteIndex(null)
             setShowDeleteModal(false)
-            console.log(habits)
             return
         }else{
             setDeleteIndex(null)
@@ -84,7 +100,6 @@ export default function Habits(){
 
     }
 
-        
     // sets the body's color
     useEffect(() => {
       document.body.style.backgroundColor = '#ff633e'
@@ -95,7 +110,7 @@ export default function Habits(){
         <MyContext.Provider value={{deleteChoice, setDeleteChoice, setHabits}}>
         <Header/>
         <div className={`${showAddModal ? '' : '-translate-x-[100vw]'} fixed w-[30%] top-0 left-0 transition-all z-50`}>
-            <AddHabitModal addModalState={handleAddModal} habitHandler={handleHabitInput}/>    
+            <AddHabitModal addModalState={handleAddModal} habitHandler={handleHabitInput} editValues={habits[editIndex]} resetHandler={arg=> arg ? setEditIndex(null) : null}/>    
         </div>
         
 
@@ -129,7 +144,7 @@ export default function Habits(){
                         )})} 
                         
                         <div className='flex'>
-                            <i class="fa-solid fa-pen-to-square"></i>
+                            <i class="fa-solid fa-pen-to-square" onClick={()=>{setEditIndex(index);setShowAddModal(true);console.log(index);console.log(habits)}}></i>
                             <i class="fa-solid fa-trash" onClick={()=>{setShowDeleteModal(true);setDeleteIndex(index)}}></i>
                         </div>                        
                     </React.Fragment>
