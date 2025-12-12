@@ -1,11 +1,12 @@
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
-export default function AddHabitModal({addModalState, habitHandler}){
+export default function AddHabitModal({addModalState, habitHandler, editValues, resetHandler}){
 
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
     const inputRef = useRef(null)
     const [selectedDay, setSelectedDay] = useState([])
     const [habitName, setHabitName] = useState('')
+
     
     function toggleDay(day){
         setSelectedDay(prev=>{
@@ -15,22 +16,23 @@ export default function AddHabitModal({addModalState, habitHandler}){
             return [...prev, day]
         })
     }
-    function exit(){
+    function close(){
         addModalState(false);
         inputRef.current.value = ''
         setSelectedDay([]);
         setHabitName('')
-        console.log(inputRef.current.value)
+        resetHandler(true)
     }
 
-    function add(){
-        habitHandler(habitName, selectedDay);
-        addModalState(false);
-        inputRef.current.value = ''
-        setSelectedDay([]);
-        setHabitName('')
-
-    }
+    useEffect(()=>{
+        if(editValues){        
+        inputRef.current.value = editValues.name
+        setSelectedDay(editValues.schedule)
+        }else{
+            return
+        }
+        
+    },[editValues])
 
 
     return(
@@ -38,7 +40,7 @@ export default function AddHabitModal({addModalState, habitHandler}){
 
             <div className="flex items-center gap-[2vw]">
                 <span className="text-[2rem] font-bold whitespace-nowrap">Add a Habit</span>
-                <button onClick={exit}>
+                <button onClick={close}>
                     <i class="fa-solid fa-xmark transition-transform hover:scale-120 text-[3rem]"></i>
                 </button>
             </div>
@@ -58,8 +60,8 @@ export default function AddHabitModal({addModalState, habitHandler}){
                 ))}
             </div>
 
-            <button id="add" onClick={add} className="hover:bg-red-800">
-                Add
+            <button id="confirm" onClick={()=>{close();habitHandler(habitName, selectedDay)}} className="hover:bg-red-800">
+                Confirm
             </button>
 
         </div>
