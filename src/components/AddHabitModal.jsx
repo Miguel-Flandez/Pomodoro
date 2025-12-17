@@ -4,6 +4,7 @@ export default function AddHabitModal({addModalState, habitHandler, editValues, 
 
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
     const inputRef = useRef(null)
+    const [warning, setWarning] = useState('')
     const [selectedDay, setSelectedDay] = useState([])
     const [habitName, setHabitName] = useState('')
 
@@ -24,6 +25,21 @@ export default function AddHabitModal({addModalState, habitHandler, editValues, 
         resetHandler(true)
     }
 
+    function confirm(){
+        if(inputRef.current.value && inputRef.current.value.trim() && selectedDay.length>0){
+            close();
+            habitHandler(habitName, selectedDay)
+            setWarning('')
+        }else if(inputRef.current.value && inputRef.current.value.trim()){
+            setWarning('Select at least one day')
+        }else if(selectedDay.length>0){
+            setWarning('Please name the habit')
+        }else{
+            setWarning('Please name the habit and select at least one day')
+        }
+         
+    }
+
     useEffect(()=>{
         if(editValues){        
         inputRef.current.value = editValues.name
@@ -36,12 +52,13 @@ export default function AddHabitModal({addModalState, habitHandler, editValues, 
 
 
     return(
-        <div id="modal-container" className="h-screen relative bg-blue-600 flex flex-col items-center py-[2rem] px-[1rem] gap-[5vw] rounded-r-4xl">
+        <div id="modal-container"
+        className="h-screen relative bg-[#144272] flex flex-col items-center py-[2rem] px-[1rem] gap-[5vw] rounded-r-4xl">
 
-            <div className="flex items-center gap-[2vw]">
-                <span className="text-[2rem] font-bold whitespace-nowrap">Add a Habit</span>
+            <div className="flex items-center justify-between gap-[2vw] w-[90%]">
+                <span className="text-[2.5rem] font-bold whitespace-nowrap">Add a Habit</span>
                 <button onClick={close}>
-                    <i class="fa-solid fa-xmark transition-transform hover:scale-120 text-[3rem]"></i>
+                    <i className="fa-solid fa-xmark transition-transform hover:rotate-90 text-[2rem]"></i>
                 </button>
             </div>
             
@@ -50,19 +67,23 @@ export default function AddHabitModal({addModalState, habitHandler, editValues, 
 
             <div id="add" className="flex flex-col w-[90%]">
                 <label htmlFor="habit" className="text-[2rem]">Name this Habit</label>
-                <input ref={inputRef} type="text" id="habit" className="border-2 text-[2rem] border-white rounded-sm h-[3rem]" onChange={(e)=>{setHabitName(e.target.value)}}/>
+                <input ref={inputRef} type="text" id="habit" className="text-[2rem] border-b-2 focus:outline-none h-[3rem]" autoComplete="off" onChange={(e)=>{setHabitName(e.target.value)}}/>
+                
             </div>
 
-            <div id="frequency" className="w-full flex justify-evenly">
+            <div id="frequency" className="w-[90%] grid grid-cols-[repeat(4,1fr)] gap-[2vw] justify-evenly flex-wrap ">
                 {days.map(day=>(
-                    <button key={day} className={`${selectedDay.find(e=>e===day)?'bg-red-800':''} text-[1rem] border-1 border-white rounded-md px-[1rem] py-[0.25rem] hover:border-blue-800`}
+                    <button key={day} className={`${selectedDay.find(e=>e===day)?'bg-[#2C74B3]! border-[#2C74B3]!':''} transition-all text-[1rem]  bg-[#1211112f] hover:bg-[#205295] rounded-md px-[1rem] py-[0.25rem]`}
                     onClick={()=>toggleDay(day)}>{day}</button>
                 ))}
             </div>
 
-            <button id="confirm" onClick={()=>{close();habitHandler(habitName, selectedDay)}} className="hover:bg-red-800">
-                Confirm
-            </button>
+            <div id="button-container" className="h-[4rem]">
+                <button className={`hover:bg-[#368bd6] bg-[#2C74B3] rounded-md transition-colors duration-200 font-bold font-mono px-[3rem] py-[1rem]`}
+                onClick={confirm}>Confirm</button>
+            </div>
+
+            <span className="absolute bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap">{warning}</span>
 
         </div>
     )
