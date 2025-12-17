@@ -48,9 +48,10 @@ export default function Habits(){
 
     // inputs the habit name and schedule
     function handleHabitInput(value1, value2){
-        setHabits(prev=>{
+        
+        const newEntry = (function(){
             if(editIndex!==null){
-                return prev.map((obj, i)=>{
+                return habits.map((obj, i)=>{
                 if(editIndex===i){
                     return {...obj, name:value1, schedule:value2}
                 }else{
@@ -58,7 +59,7 @@ export default function Habits(){
                 }
                 })
             }else{
-                return [...prev,{
+                return [...habits,{
                 name: value1,
                 schedule: value2,
                 streak: 0,
@@ -66,29 +67,37 @@ export default function Habits(){
                 }]
             }
             
-        }
+        })()
+
+        setHabits(newEntry);
+        localStorage.setItem('habits', JSON.stringify(newEntry))
             
-    )
         console.log(habits)
     }
 
     // function for habit checkbox
     function checkHabit(habitIndex, date){
-        setHabits(prev=>{            
-                return prev.map((habit, index)=>habitIndex===index ?{
+
+        const updatedEntry = (function(){
+            return habits.map((habit, index)=>habitIndex===index ?{
                 ...habit, 
                 daysCompleted: habit.daysCompleted.find(i=>i===date) ? habit.daysCompleted.filter(i=>i!==date) : [...habit.daysCompleted, date]
                 } : habit
 
                 
-            )}
-        )
+            )
+        })()
+        setHabits(updatedEntry)
+        localStorage.setItem('habits', JSON.stringify(updatedEntry))
     }
 
     // deletes the selected habit
     function handleDelete(value){
+
+        const deletedValue = (() => habits.filter((_,i)=>i!==deleteIndex))()
         if(value){
-            setHabits(prev=>prev.filter((_,i)=>i!==deleteIndex))
+            setHabits(deletedValue)
+            localStorage.setItem('habits', JSON.stringify(deletedValue))
             setDeleteIndex(null)
             setShowDeleteModal(false)
             return
@@ -100,67 +109,84 @@ export default function Habits(){
 
     }
 
-    // sets the body's color
+    // sets the body's color 
     useEffect(() => {
-      document.body.style.backgroundColor = '#ff633e'
+        const stored = localStorage.getItem('habits')
+        
+        if(stored){
+            setHabits(JSON.parse(stored))
+        }
+
+        // localStorage.setItem('habits', [])
     }, [])
     
 
     return(
         <MyContext.Provider value={{deleteChoice, setDeleteChoice, setHabits}}>
-        <Header/>
-        <div className={`${showAddModal ? '' : '-translate-x-[100vw]'} fixed w-[30%] top-0 left-0 transition-all z-50`}>
-            <AddHabitModal addModalState={handleAddModal} habitHandler={handleHabitInput} editValues={habits[editIndex]} resetHandler={arg=> arg ? setEditIndex(null) : null}/>    
-        </div>
-        
+        <div className='h-screen overflow-hidden  bg-[#205295]'>
 
-        
-        <div id='streak-container' className='w-[90vw] m-auto p-[2rem]'>
-            
-
-            <div id="streaks" className='grid grid-cols-[2fr_repeat(7,1fr)_0.25fr] gap-[2vw] items-center'>
-                <div></div>
-                    
-                    {sortedDays.map((day,i)=>(
-                        <div className='flex flex-col' key={day}>
-                            <span>{day}</span>
-                            <span>{lastSevenDates[i]}</span>
-                        </div>
-                        
-                    ))}
-                    
-                <div></div>
-
-                {habits.map((habit, index)=>(
-                    <React.Fragment key={index}>
-                        <span className="habit">{habit.name}</span>
-                        {sortedDays.map((day, id)=>{
-                            const date = new Date()
-                            date.setDate(todate.getDate() - (6-id))    
-                        
-                        return(
-                            <div key={id} className={`${habit.daysCompleted.find(e=>e===date.getDate()) ? 'bg-white' : ''} ${habit.schedule?.find(n=>n===day)? '' : 'border-transparent! '} border-2 border-white rounded-md w-[2rem] h-[2rem]`}
-                             onClick={()=>checkHabit(index, date.getDate())}></div>
-                        )})} 
-                        
-                        <div className='flex'>
-                            <i class="fa-solid fa-pen-to-square" onClick={()=>{setEditIndex(index);setShowAddModal(true);console.log(index);console.log(habits)}}></i>
-                            <i class="fa-solid fa-trash" onClick={()=>{setShowDeleteModal(true);setDeleteIndex(index)}}></i>
-                        </div>                        
-                    </React.Fragment>
-                ))}
-                {showDeleteModal && <DeleteModal deleteHandler={handleDelete}/>}
-                
+            <Header/>
+            <div className={`${showAddModal ? '' : '-translate-x-[100vw] opacity-0'} fixed  top-0 left-0 transition-all z-50`}>
+                <AddHabitModal addModalState={handleAddModal} habitHandler={handleHabitInput} editValues={habits[editIndex]} resetHandler={arg=> arg ? setEditIndex(null) : null}/>    
             </div>
             
+                
+            <div id='streak-container' className='flex flex-col w-[90vw] m-auto gap-[2vw] '>
+                <div className='grid grid-cols-[2fr_repeat(7,1fr)_2fr] gap-[2vw] items-center'>
+                    <div className='text-[2rem] font-bold'>{todate.toLocaleString("default", {month:"long"})}</div>
+                            
+                        {sortedDays.map((day,i)=>(
+                            <div className='flex flex-col' key={day}>
+                                <span>{day}</span>
+                                <span>{lastSevenDates[i]}</span>
+                            </div>
+                            
+                        ))}
+                            
+                        <div className='flex'>
+                            <button className={`${showAddModal? 'hidden' : ''} flex gap-[1rem] items-center justify-center cursor-default hover:bg-[#1211112f] hover:rounded-md py-[0.5rem] px-[1rem]`}
+                                onClick={()=>setShowAddModal(true)}>
+                                <i className="fa-solid fa-plus"></i>
+                                <span className='whitespace-nowrap'>Add Habit</span>
+                            </button>
+                            {/* for testing */}
+                            <button id="reset" className='hover:bg-red-800' onClick={()=>{localStorage.setItem('habits', []);setHabits([])}}>reset</button>
+                            <div className={`${!showAddModal ? 'hidden' : ''}`}></div>
+                        </div>
+                        
+                    
+
+                    
+                </div>
+            
+                    
+                <div id="streaks" className='grid grid-cols-[2fr_repeat(7,1fr)_2fr] gap-[2vw] auto-rows-min overflow-auto h-[80vh]'>
+                    {habits.map((habit, index)=>(
+                        <React.Fragment key={index}>
+                            <span className="habit">{habit.name}</span>
+                            {sortedDays.map((day, id)=>{
+                                const date = new Date()
+                                date.setDate(todate.getDate() - (6-id))    
+                            
+                            return(
+                                <React.Fragment key={id}>
+                                    <button className={`${habit.daysCompleted.find(e=>e===date.getDate()) ? 'bg-white' : ''} ${habit.schedule?.find(n=>n===day)? '' : 'border-transparent! bg-transparent!'} border-2 rounded-md w-[2rem] h-[2rem]`}
+                                    onClick={()=>checkHabit(index, date.getDate())}></button>
+                                </React.Fragment>
+                            )})} 
+                            
+                            <div className='flex justify-evenly'>
+                                <i className="fa-solid fa-pen-to-square hover:text-[#1211112f]" onClick={()=>{setEditIndex(index);setShowAddModal(true);console.log(index);console.log(habits)}}></i>
+                                <i className="fa-solid fa-trash hover:text-[#1211112f]" onClick={()=>{setShowDeleteModal(true);setDeleteIndex(index)}}></i>
+                            </div>                        
+                        </React.Fragment>
+                    ))}
+                    {showDeleteModal && <DeleteModal deleteHandler={handleDelete}/>}
+                    
+                </div>
+                
+            </div>
         </div>
-
-        <button className={`${showAddModal? 'hidden' : ''} absolute right-1/2 translate-x-1/2  bottom-2  flex gap-[1rem] items-center justify-center cursor-default hover:bg-[#1211112f] w-[10rem] hover:rounded-md py-[0.5rem] px-[2rem]`}
-        onClick={()=>setShowAddModal(true)}>
-            <i class="fa-solid fa-plus"></i>
-            <span className='text-mono whitespace-nowrap'>Add Habit</span>
-        </button>
-
        
         
         
