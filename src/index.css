@@ -6,7 +6,7 @@
         color: white;
         width: 100%;
         transition: background-color 0.2s ease-out;
-        font-family: monospace;
+        font-family: monospace !important;
     }
 }
 
