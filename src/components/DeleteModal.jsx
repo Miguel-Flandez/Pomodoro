@@ -1,9 +1,5 @@
-import { useContext } from "react"
-import {MyContext} from '@/context'
 
 export default function DeleteModal({deleteHandler}){
-
-    const {setDeleteChoice} = useContext(MyContext)
 
     
     return(
@@ -12,8 +8,8 @@ export default function DeleteModal({deleteHandler}){
                 py-[1rem] px-[1.25rem] rounded-md`}>
                 <span className="font-bold text-[1rem] m-auto">Are you sure you want to delete this habit?</span>
                 <div id="choice" className="flex justify-around">
-                    <span className="bg-red-800 hover:bg-red-700 rounded-md px-[1rem] py-[0.25rem]" onClick={()=>{setDeleteChoice(true);deleteHandler(true)}}>Delete</span>
-                    <span className="bg-[#1211112f] hover:bg-[#0000005f] rounded-md px-[1rem] py-[0.25rem]" onClick={()=>{setDeleteChoice(false);deleteHandler(false)}}>Cancel</span>
+                    <span className="bg-red-800 hover:bg-red-700 rounded-md px-[1rem] py-[0.25rem]" onClick={()=>{deleteHandler(true)}}>Delete</span>
+                    <span className="bg-[#1211112f] hover:bg-[#0000005f] rounded-md px-[1rem] py-[0.25rem]" onClick={()=>{deleteHandler(false)}}>Cancel</span>
                 </div>
             </div>
         </div>
