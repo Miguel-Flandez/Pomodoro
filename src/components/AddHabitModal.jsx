@@ -22,6 +22,7 @@ export default function AddHabitModal({setShowAddModal, habitHandler, editValues
     function close(){
         setShowAddModal(false);
         inputRef.current.value = ''
+        setWarning('')
         setSelectedDay([]);
         setHabitName('')
         resetHandler(true)
@@ -57,7 +58,7 @@ export default function AddHabitModal({setShowAddModal, habitHandler, editValues
 
     return(
         <div id="modal-container"
-        className="h-screen relative bg-[#144272] flex flex-col items-center py-[2rem] px-[1rem] gap-[5vw] rounded-r-4xl">
+        className="h-screen relative bg-[#144272] flex flex-col items-center py-[5rem] px-[1rem] gap-[2.5vw] rounded-r-4xl w-[30rem] max-md:w-screen max-md:rounded-none">
 
             <div id="add-prompt" className="flex items-center justify-between gap-[2vw] w-[90%]">
                 <span className="text-[2.5rem] font-bold whitespace-nowrap">Add a Habit</span>
@@ -75,19 +76,22 @@ export default function AddHabitModal({setShowAddModal, habitHandler, editValues
                 
             </div>
 
-            <div id="days-container" className="w-[90%] grid grid-cols-[repeat(4,1fr)] gap-[2vw] justify-evenly flex-wrap ">
+            <div id="days-container" className="w-[90%] grid grid-cols-[repeat(3,1fr)] gap-1 ">
                 {days.map(day=>(
-                    <button key={day} className={`${selectedDay.find(e=>e===day)&&'bg-[#2C74B3]! border-[#2C74B3]!'} transition-all text-[1rem]  bg-[#1211112f] hover:bg-[#205295] rounded-md px-[1rem] py-[0.25rem]`}
+                    <button key={day} className={`${selectedDay.find(e=>e===day)&&'bg-[#2C74B3]! border-[#2C74B3]!'} transition-all text-[2rem]  bg-[#1211112f] hover:bg-[#205295] rounded-md px-[1rem] py-[0.25rem]`}
                     onClick={()=>toggleDay(day)}>{day}</button>
                 ))}
+                
             </div>
+
+            <span id="warning" className={`${!warning && 'text-transparent' } whitespace-nowrap`}>{warning} {!warning && 'genius solution'}</span>
 
             <div id="button-container" className="h-[4rem]">
                 <button className={`hover:bg-[#368bd6] bg-[#2C74B3] rounded-md transition-colors duration-200 font-bold font-mono px-[3rem] py-[1rem]`}
                 onClick={confirm}>Confirm</button>
             </div>
 
-            <span id="warning" className="absolute bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap">{warning}</span>
+            
 
         </div>
     )

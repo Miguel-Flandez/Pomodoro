@@ -77,11 +77,11 @@ export default function Habits(){
 
     return(
 
-        <div className='h-screen overflow-hidden'>
+        <div className='h-screen w-screen'>
 
             <Header/>
 
-            <div className={`${!showAddModal && '-translate-x-[100vw] opacity-0'} fixed  top-0 left-0 transition-all duration-500 z-50`}>
+            <div className={`${!showAddModal && '-translate-x-[100vw] opacity-0'} fixed w-full top-0 left-0 transition-all duration-500 z-50`}>
                 <AddHabitModal setShowAddModal={setShowAddModal} habitHandler={handleHabitInput} editValues={habits[editIndex]} resetHandler={arg=> arg ? setEditIndex(null) : null}/>    
             </div>
             
