@@ -7,11 +7,7 @@ export default function Header(){
     const [page, setPage] = useState('')
 
     useEffect(()=>{
-        if(location.pathname==='/'){
-            setPage('habits')
-        }else{
-            setPage('pomodoro')
-        }
+        location.pathname === '/' ? setPage('habits') : setPage('pomodoro')
     },[])
 
 const navigate = useNavigate()
