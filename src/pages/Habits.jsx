@@ -66,12 +66,13 @@ export default function Habits(){
     useEffect(() => {
         document.body.style.backgroundColor = '#205295'
         const stored = localStorage.getItem('habits')
-        
-        if(stored){
-            setHabits(JSON.parse(stored))
-        }
 
-        // localStorage.setItem('habits', [])
+        stored && setHabits(JSON.parse(stored))
+        
+        // if(stored){
+        //     setHabits(JSON.parse(stored))
+        // }
+
     }, [])
     
 
@@ -82,7 +83,8 @@ export default function Habits(){
             <Header/>
 
             <div className={`${!showAddModal && '-translate-x-[100vw] opacity-0'} fixed w-full top-0 left-0 transition-all duration-500 z-50`}>
-                <AddHabitModal setShowAddModal={setShowAddModal} habitHandler={handleHabitInput} editValues={habits[editIndex]} resetHandler={arg=> arg ? setEditIndex(null) : null}/>    
+                <AddHabitModal setShowAddModal={setShowAddModal} habitHandler={handleHabitInput} 
+                editValues={habits[editIndex]} resetHandler={arg=> arg ? setEditIndex(null) : null}/>    
             </div>
             
         
